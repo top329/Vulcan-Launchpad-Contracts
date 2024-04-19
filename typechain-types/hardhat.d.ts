@@ -14,10 +14,6 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Ownable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Ownable__factory>;
-    getContractFactory(
       name: "IERC1155Errors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155Errors__factory>;
@@ -54,13 +50,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Address__factory>;
     getContractFactory(
-      name: "USDCToken",
+      name: "ReentrancyGuard",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.USDCToken__factory>;
+    ): Promise<Contracts.ReentrancyGuard__factory>;
     getContractFactory(
-      name: "USDCToken",
+      name: "DAI",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.USDCToken__factory>;
+    ): Promise<Contracts.DAI__factory>;
+    getContractFactory(
+      name: "DEW",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DEW__factory>;
     getContractFactory(
       name: "Vulcan",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -71,11 +71,6 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.VulcanPadFactory__factory>;
 
     getContractAt(
-      name: "Ownable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Ownable>;
-    getContractAt(
       name: "IERC1155Errors",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -121,15 +116,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Address>;
     getContractAt(
-      name: "USDCToken",
+      name: "ReentrancyGuard",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.USDCToken>;
+    ): Promise<Contracts.ReentrancyGuard>;
     getContractAt(
-      name: "USDCToken",
+      name: "DAI",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.USDCToken>;
+    ): Promise<Contracts.DAI>;
+    getContractAt(
+      name: "DEW",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DEW>;
     getContractAt(
       name: "Vulcan",
       address: string | ethers.Addressable,
@@ -142,10 +142,6 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.VulcanPadFactory>;
 
     deployContract(
-      name: "Ownable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Ownable>;
-    deployContract(
       name: "IERC1155Errors",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC1155Errors>;
@@ -182,13 +178,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Address>;
     deployContract(
-      name: "USDCToken",
+      name: "ReentrancyGuard",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.USDCToken>;
+    ): Promise<Contracts.ReentrancyGuard>;
     deployContract(
-      name: "USDCToken",
+      name: "DAI",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.USDCToken>;
+    ): Promise<Contracts.DAI>;
+    deployContract(
+      name: "DEW",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DEW>;
     deployContract(
       name: "Vulcan",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -199,11 +199,6 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.VulcanPadFactory>;
 
     deployContract(
-      name: "Ownable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Ownable>;
-    deployContract(
       name: "IERC1155Errors",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -249,15 +244,20 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Address>;
     deployContract(
-      name: "USDCToken",
+      name: "ReentrancyGuard",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.USDCToken>;
+    ): Promise<Contracts.ReentrancyGuard>;
     deployContract(
-      name: "USDCToken",
+      name: "DAI",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.USDCToken>;
+    ): Promise<Contracts.DAI>;
+    deployContract(
+      name: "DEW",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DEW>;
     deployContract(
       name: "Vulcan",
       args: any[],

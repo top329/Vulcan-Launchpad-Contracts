@@ -26,35 +26,42 @@ import type {
 export interface VulcanPadFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "daiAddress"
       | "daiToken"
-      | "depositToken"
+      | "daoAddress"
       | "feeAmount"
+      | "feeContributions"
+      | "getVulcans"
       | "launchNewICO"
       | "owner"
+      | "paidSpamFilterFee"
       | "paySpamFilterFee"
+      | "setDAOAddress"
+      | "setOwner"
       | "vulcans"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "SpamFilterFeePaid"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ICOCreated" | "SpamFilterFeePaid"
+  ): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "daiAddress",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "daiToken", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "depositToken",
-    values: [AddressLike, AddressLike, BigNumberish]
+    functionFragment: "daoAddress",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "feeAmount", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "feeContributions",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVulcans",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "launchNewICO",
     values: [
       string,
-      string,
-      string,
-      string,
       BigNumberish,
       BigNumberish,
       BigNumberish,
@@ -63,36 +70,108 @@ export interface VulcanPadFactoryInterface extends Interface {
       BigNumberish,
       BigNumberish,
       BigNumberish,
+      AddressLike,
       AddressLike
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "paidSpamFilterFee",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "paySpamFilterFee",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDAOAddress",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOwner",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "vulcans",
     values: [BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "daiAddress", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "daiToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "daoAddress", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeAmount", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "depositToken",
+    functionFragment: "feeContributions",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "feeAmount", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getVulcans", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "launchNewICO",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "paidSpamFilterFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "paySpamFilterFee",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setDAOAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "vulcans", data: BytesLike): Result;
+}
+
+export namespace ICOCreatedEvent {
+  export type InputTuple = [
+    user: AddressLike,
+    projectURI: string,
+    softcap: BigNumberish,
+    hardcap: BigNumberish,
+    endTime: BigNumberish,
+    name: string,
+    symbol: string,
+    price: BigNumberish,
+    decimal: BigNumberish,
+    totalSupply: BigNumberish,
+    tokenAddress: AddressLike,
+    lister: AddressLike
+  ];
+  export type OutputTuple = [
+    user: string,
+    projectURI: string,
+    softcap: bigint,
+    hardcap: bigint,
+    endTime: bigint,
+    name: string,
+    symbol: string,
+    price: bigint,
+    decimal: bigint,
+    totalSupply: bigint,
+    tokenAddress: string,
+    lister: string
+  ];
+  export interface OutputObject {
+    user: string;
+    projectURI: string;
+    softcap: bigint;
+    hardcap: bigint;
+    endTime: bigint;
+    name: string;
+    symbol: string;
+    price: bigint;
+    decimal: bigint;
+    totalSupply: bigint;
+    tokenAddress: string;
+    lister: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace SpamFilterFeePaidEvent {
@@ -151,28 +230,19 @@ export interface VulcanPadFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  daiAddress: TypedContractMethod<[], [string], "view">;
-
   daiToken: TypedContractMethod<[], [string], "view">;
 
-  depositToken: TypedContractMethod<
-    [
-      vulcanAddress_: AddressLike,
-      tokenAddress_: AddressLike,
-      amount_: BigNumberish
-    ],
-    [void],
-    "nonpayable"
-  >;
+  daoAddress: TypedContractMethod<[], [string], "view">;
 
   feeAmount: TypedContractMethod<[], [bigint], "view">;
 
+  feeContributions: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  getVulcans: TypedContractMethod<[], [string[]], "view">;
+
   launchNewICO: TypedContractMethod<
     [
-      title_: string,
-      description_: string,
-      logo_: string,
-      videoLink_: string,
+      projectURI_: string,
       softcap_: BigNumberish,
       hardcap_: BigNumberish,
       endTime_: BigNumberish,
@@ -181,7 +251,8 @@ export interface VulcanPadFactory extends BaseContract {
       price_: BigNumberish,
       decimal_: BigNumberish,
       totalSupply_: BigNumberish,
-      tokenAddress_: AddressLike
+      tokenAddress_: AddressLike,
+      lister_: AddressLike
     ],
     [string],
     "nonpayable"
@@ -189,7 +260,21 @@ export interface VulcanPadFactory extends BaseContract {
 
   owner: TypedContractMethod<[], [string], "view">;
 
+  paidSpamFilterFee: TypedContractMethod<
+    [user_: AddressLike],
+    [boolean],
+    "view"
+  >;
+
   paySpamFilterFee: TypedContractMethod<[], [void], "nonpayable">;
+
+  setDAOAddress: TypedContractMethod<
+    [daoAddress_: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setOwner: TypedContractMethod<[owner_: AddressLike], [void], "nonpayable">;
 
   vulcans: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
@@ -198,33 +283,25 @@ export interface VulcanPadFactory extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "daiAddress"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "daiToken"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "depositToken"
-  ): TypedContractMethod<
-    [
-      vulcanAddress_: AddressLike,
-      tokenAddress_: AddressLike,
-      amount_: BigNumberish
-    ],
-    [void],
-    "nonpayable"
-  >;
+    nameOrSignature: "daoAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "feeAmount"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "feeContributions"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getVulcans"
+  ): TypedContractMethod<[], [string[]], "view">;
+  getFunction(
     nameOrSignature: "launchNewICO"
   ): TypedContractMethod<
     [
-      title_: string,
-      description_: string,
-      logo_: string,
-      videoLink_: string,
+      projectURI_: string,
       softcap_: BigNumberish,
       hardcap_: BigNumberish,
       endTime_: BigNumberish,
@@ -233,7 +310,8 @@ export interface VulcanPadFactory extends BaseContract {
       price_: BigNumberish,
       decimal_: BigNumberish,
       totalSupply_: BigNumberish,
-      tokenAddress_: AddressLike
+      tokenAddress_: AddressLike,
+      lister_: AddressLike
     ],
     [string],
     "nonpayable"
@@ -242,12 +320,28 @@ export interface VulcanPadFactory extends BaseContract {
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "paidSpamFilterFee"
+  ): TypedContractMethod<[user_: AddressLike], [boolean], "view">;
+  getFunction(
     nameOrSignature: "paySpamFilterFee"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setDAOAddress"
+  ): TypedContractMethod<[daoAddress_: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setOwner"
+  ): TypedContractMethod<[owner_: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "vulcans"
   ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
+  getEvent(
+    key: "ICOCreated"
+  ): TypedContractEvent<
+    ICOCreatedEvent.InputTuple,
+    ICOCreatedEvent.OutputTuple,
+    ICOCreatedEvent.OutputObject
+  >;
   getEvent(
     key: "SpamFilterFeePaid"
   ): TypedContractEvent<
@@ -257,6 +351,17 @@ export interface VulcanPadFactory extends BaseContract {
   >;
 
   filters: {
+    "ICOCreated(address,string,uint256,uint256,uint256,string,string,uint256,uint256,uint256,address,address)": TypedContractEvent<
+      ICOCreatedEvent.InputTuple,
+      ICOCreatedEvent.OutputTuple,
+      ICOCreatedEvent.OutputObject
+    >;
+    ICOCreated: TypedContractEvent<
+      ICOCreatedEvent.InputTuple,
+      ICOCreatedEvent.OutputTuple,
+      ICOCreatedEvent.OutputObject
+    >;
+
     "SpamFilterFeePaid(address,uint256)": TypedContractEvent<
       SpamFilterFeePaidEvent.InputTuple,
       SpamFilterFeePaidEvent.OutputTuple,
