@@ -61,6 +61,28 @@ contract Vulcan is ReentrancyGuard {
         uint256 price;
     }
 
+    /// @dev struct for fee distribution
+    struct DISTRIBUTION {
+        bool distributed;
+        address distributor;
+        uint256 timestamp;
+    }
+
+    /// @dev struct for fee refund
+    struct REFUND {
+        bool refunded;
+        address refunder;
+        uint256 timestamp;
+    }
+
+    /// @dev structure for investment details
+    struct HISTORY {
+        address investor;
+        address contributor;
+        uint256 amount;
+        uint256 timestamp;
+    }
+
     /// @dev enum for representing ICO's state
     enum ICOState {
         PROGRESS,
@@ -77,6 +99,9 @@ contract Vulcan is ReentrancyGuard {
 
     /// @dev contract owner
     address public daoAddress;
+
+    /// @dev ICO start time
+    uint256 public startTime;
 
     //@dev immutables
     IERC20 public immutable token;
@@ -110,6 +135,15 @@ contract Vulcan is ReentrancyGuard {
 
     // @dev Tracks contribution partners
     address[] public contributors;
+
+    // @dev test if funds are distributed
+    DISTRIBUTION public distribution;
+
+    // @dev test if funds are refunded
+    REFUND public refund;
+
+    // @dev investment history
+    HISTORY[] public history;
 
     // @dev Tracks contributions of contribution partners
     mapping(address => uint256) public contributions;
@@ -206,10 +240,12 @@ contract Vulcan is ReentrancyGuard {
     /// @dev event for fee distribution after ico success
     event FeeDistributed(
         address ico_,
+        address distributor_,
         uint256 fundsRaised_,
         uint256 daoFee_,
         uint256 listerFee_,
-        uint256 creatorFee_
+        uint256 creatorFee_,
+        uint256 timestamp_
     );
 
     /// @dev event for new investment
@@ -217,11 +253,12 @@ contract Vulcan is ReentrancyGuard {
         address ico_,
         address investor_,
         address contributor_,
-        uint256 amount_
+        uint256 amount_,
+        uint256 timestamp_
     );
 
     /// @dev event for refunding all funds
-    event FundsRefunded(address ico_, string msg_);
+    event FundsRefunded(address ico_, address caller_, uint256 timestamp_);
 
     /**
      * @dev constructor for new ICO launch
@@ -279,6 +316,7 @@ contract Vulcan is ReentrancyGuard {
         creator = creator_;
         softcap = softcap_;
         hardcap = hardcap_;
+        startTime = block.timestamp;
         endTime = endTime_;
 
         token = IERC20(tokenAddress_);
@@ -291,6 +329,18 @@ contract Vulcan is ReentrancyGuard {
     function maxAmountToPurchase() public view returns (uint256) {
         uint256 _amount = token.balanceOf(address(this));
         return _amount;
+    }
+
+    /// @dev test if tokens are charged fully to reach hardcap
+    function tokensFullyCharged() public view returns (bool) {
+        uint _tokensAvailable = tokensAvailable();
+        uint _fundsAbleToRaise = (tokenInfo.price * _tokensAvailable) / 10 ** tokenInfo.decimal;
+
+        if ( _fundsAbleToRaise >= hardcap ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -375,13 +425,21 @@ contract Vulcan is ReentrancyGuard {
             payable(msg.sender).transfer(_gap); // If there is any ETH left after purchasing tokens, it will be refunded.
         }
 
+        // save investment history
+        history.push(HISTORY(
+            msg.sender,
+            contributor_,
+            amount_,
+            block.timestamp
+        ));
+
         fundsRaised += amount_;
         if (fundsRaised >= hardcap) {
             // Once the funds raised reach the hard cap, the ICO is completed and the funds are distributed.
             endTime = block.timestamp - 1;
             distribute();
         }
-        emit Invest(address(this), msg.sender, contributor_, amount_);
+        emit Invest(address(this), msg.sender, contributor_, amount_, block.timestamp);
     }
 
     /**
@@ -401,6 +459,7 @@ contract Vulcan is ReentrancyGuard {
      * @dev If the ICO fails to reach the soft cap before the end of the self-set time, all funds will be refunded to investors.
      */
     function finishNotSuccess() internal {
+
         // refunds all funds to investors
         for (uint256 i = 0; i < investors.length; i++) {
             address to = investors[i];
@@ -408,13 +467,20 @@ contract Vulcan is ReentrancyGuard {
             investments[to] = 0;
             if (amount > 0) payable(to).transfer(amount);
         }
+
         // refunds all tokens to creator
         uint256 _tokens = tokensAvailable();
         SafeERC20.safeTransfer(token, creator, _tokens);
 
+        // set refund information
+        refund.refunded = true;
+        refund.refunder = msg.sender;
+        refund.timestamp = block.timestamp;
+
         emit FundsRefunded(
             address(this),
-            "The ICO fails and all funds are refunded."
+            msg.sender,
+            block.timestamp
         );
     }
 
@@ -449,13 +515,19 @@ contract Vulcan is ReentrancyGuard {
                 tokenInfo.price;
             SafeERC20.safeTransfer(token, _to, _tokens);
         }
+        // set distribution information
+        distribution.distributed = true;
+        distribution.distributor = msg.sender;
+        distribution.timestamp = block.timestamp;
 
         emit FeeDistributed(
             address(this),
+            msg.sender,
             _funds,
             _daoFee,
             _listerFee,
-            _creatorFee
+            _creatorFee,
+            block.timestamp
         );
     }
 
@@ -475,20 +547,39 @@ contract Vulcan is ReentrancyGuard {
         return _state;
     }
 
-    function getInvestorNumber() public view returns (uint256) {
-        return investors.length;
+    /**
+     * @dev get all investors
+     */
+    function getInvestors() public view returns (address[] memory) {
+        return investors;
     }
 
-    function getInvestorAmount(address from) public view returns (uint256) {
+    /**
+     * @dev Get the investor's investment amount
+    */
+    function getInvestAmount(address from) public view returns (uint256) {
         return investments[from];
     }
 
-    function getContributorNumber() public view returns (uint256) {
-        return contributors.length;
+    /**
+     * @dev Get all contributors
+     */
+    function getContributors() public view returns (address[] memory) {
+        return contributors;
     }
 
+    /**
+     * @dev Get contribution partner's fee
+     */
     function getContributorAmount(address from) public view returns (uint256) {
         return contributions[from];
+    }
+
+    /**
+     * @dev get all investment history
+     */
+    function getHistory() public view returns (HISTORY[] memory) {
+        return history;
     }
 
     function getTokenAmountForInvestor(

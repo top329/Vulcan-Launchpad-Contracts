@@ -1,10 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "E:\\workspace\\work\\vulcan launchpad\\contracts\\contracts\\DAI.sol": {
-      "lastModificationDate": 1713262043997,
-      "contentHash": "509428ef865c072a522d69be9c2fb001",
-      "sourceName": "contracts/DAI.sol",
+    "E:\\workspace\\work\\vulcan launchpad\\contracts\\contracts\\CryptoSI.sol": {
+      "lastModificationDate": 1713783729128,
+      "contentHash": "c7972c25d58985496cd9153318c702b3",
+      "sourceName": "contracts/CryptoSI.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -37,7 +37,7 @@
         "^0.8.19"
       ],
       "artifacts": [
-        "DAI"
+        "CryptoSI"
       ]
     },
     "E:\\workspace\\work\\vulcan launchpad\\contracts\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
@@ -350,8 +350,8 @@
       ]
     },
     "E:\\workspace\\work\\vulcan launchpad\\contracts\\contracts\\VulcanPadFactory.sol": {
-      "lastModificationDate": 1713425411688,
-      "contentHash": "69cbfebb4fc17d8d8b8893cd9686809f",
+      "lastModificationDate": 1713872684142,
+      "contentHash": "7fbce4b5a1dcfeaf3ddf953fc304cebb",
       "sourceName": "contracts/VulcanPadFactory.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -392,8 +392,8 @@
       ]
     },
     "E:\\workspace\\work\\vulcan launchpad\\contracts\\contracts\\Vulcan.sol": {
-      "lastModificationDate": 1713520411010,
-      "contentHash": "b208363ba8183a110fe2cea908cc1866",
+      "lastModificationDate": 1713947782376,
+      "contentHash": "d89ee9d7af5509a852c2e6b217bb8db4",
       "sourceName": "contracts/Vulcan.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -509,7 +509,7 @@
       ]
     },
     "E:\\workspace\\work\\vulcan launchpad\\contracts\\contracts\\DEW.sol": {
-      "lastModificationDate": 1713465508642,
+      "lastModificationDate": 1713520760416,
       "contentHash": "e8d82e6331dec33ed273d4b959a4c204",
       "sourceName": "contracts/DEW.sol",
       "solcConfig": {
@@ -545,6 +545,45 @@
       ],
       "artifacts": [
         "DEW"
+      ]
+    },
+    "E:\\workspace\\work\\vulcan launchpad\\contracts\\contracts\\DAI.sol": {
+      "lastModificationDate": 1713262043997,
+      "contentHash": "509428ef865c072a522d69be9c2fb001",
+      "sourceName": "contracts/DAI.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 100
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "DAI"
       ]
     }
   }

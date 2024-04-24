@@ -54,6 +54,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReentrancyGuard__factory>;
     getContractFactory(
+      name: "CryptoSI",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CryptoSI__factory>;
+    getContractFactory(
       name: "DAI",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DAI__factory>;
@@ -121,6 +125,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ReentrancyGuard>;
     getContractAt(
+      name: "CryptoSI",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CryptoSI>;
+    getContractAt(
       name: "DAI",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -182,6 +191,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReentrancyGuard>;
     deployContract(
+      name: "CryptoSI",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CryptoSI>;
+    deployContract(
       name: "DAI",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DAI>;
@@ -248,6 +261,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
+      name: "CryptoSI",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CryptoSI>;
     deployContract(
       name: "DAI",
       args: any[],

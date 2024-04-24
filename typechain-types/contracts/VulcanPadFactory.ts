@@ -127,10 +127,12 @@ export interface VulcanPadFactoryInterface extends Interface {
 
 export namespace ICOCreatedEvent {
   export type InputTuple = [
-    user: AddressLike,
+    creator_: AddressLike,
+    ico_: AddressLike,
     projectURI: string,
     softcap: BigNumberish,
     hardcap: BigNumberish,
+    startTime: BigNumberish,
     endTime: BigNumberish,
     name: string,
     symbol: string,
@@ -141,10 +143,12 @@ export namespace ICOCreatedEvent {
     lister: AddressLike
   ];
   export type OutputTuple = [
-    user: string,
+    creator_: string,
+    ico_: string,
     projectURI: string,
     softcap: bigint,
     hardcap: bigint,
+    startTime: bigint,
     endTime: bigint,
     name: string,
     symbol: string,
@@ -155,10 +159,12 @@ export namespace ICOCreatedEvent {
     lister: string
   ];
   export interface OutputObject {
-    user: string;
+    creator_: string;
+    ico_: string;
     projectURI: string;
     softcap: bigint;
     hardcap: bigint;
+    startTime: bigint;
     endTime: bigint;
     name: string;
     symbol: string;
@@ -351,7 +357,7 @@ export interface VulcanPadFactory extends BaseContract {
   >;
 
   filters: {
-    "ICOCreated(address,string,uint256,uint256,uint256,string,string,uint256,uint256,uint256,address,address)": TypedContractEvent<
+    "ICOCreated(address,address,string,uint256,uint256,uint256,uint256,string,string,uint256,uint256,uint256,address,address)": TypedContractEvent<
       ICOCreatedEvent.InputTuple,
       ICOCreatedEvent.OutputTuple,
       ICOCreatedEvent.OutputObject

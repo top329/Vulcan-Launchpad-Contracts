@@ -26,6 +26,8 @@ export type { Address } from "./@openzeppelin/contracts/utils/Address";
 export { Address__factory } from "./factories/@openzeppelin/contracts/utils/Address__factory";
 export type { ReentrancyGuard } from "./@openzeppelin/contracts/utils/ReentrancyGuard";
 export { ReentrancyGuard__factory } from "./factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory";
+export type { CryptoSI } from "./contracts/CryptoSI";
+export { CryptoSI__factory } from "./factories/contracts/CryptoSI__factory";
 export type { DAI } from "./contracts/DAI";
 export { DAI__factory } from "./factories/contracts/DAI__factory";
 export type { DEW } from "./contracts/DEW";

@@ -23,6 +23,27 @@ import type {
   TypedContractMethod,
 } from "../common";
 
+export declare namespace Vulcan {
+  export type HISTORYStruct = {
+    investor: AddressLike;
+    contributor: AddressLike;
+    amount: BigNumberish;
+    timestamp: BigNumberish;
+  };
+
+  export type HISTORYStructOutput = [
+    investor: string,
+    contributor: string,
+    amount: bigint,
+    timestamp: bigint
+  ] & {
+    investor: string;
+    contributor: string;
+    amount: bigint;
+    timestamp: bigint;
+  };
+}
+
 export interface VulcanInterface extends Interface {
   getFunction(
     nameOrSignature:
@@ -30,17 +51,20 @@ export interface VulcanInterface extends Interface {
       | "contributors"
       | "creator"
       | "daoAddress"
+      | "distribution"
       | "endTime"
       | "ethdByTokens"
       | "finish"
       | "fundsRaised"
       | "getContributorAmount"
-      | "getContributorNumber"
+      | "getContributors"
+      | "getHistory"
       | "getICOState"
-      | "getInvestorAmount"
-      | "getInvestorNumber"
+      | "getInvestAmount"
+      | "getInvestors"
       | "getTokenAmountForInvestor"
       | "hardcap"
+      | "history"
       | "invest"
       | "investments"
       | "investors"
@@ -49,12 +73,15 @@ export interface VulcanInterface extends Interface {
       | "minEthAvailable"
       | "owner"
       | "projectURI"
+      | "refund"
       | "softcap"
+      | "startTime"
       | "token"
       | "tokenInfo"
       | "tokensAvailable"
       | "tokensAvailableByEth"
       | "tokensByEth"
+      | "tokensFullyCharged"
       | "totalCap"
   ): FunctionFragment;
 
@@ -75,6 +102,10 @@ export interface VulcanInterface extends Interface {
     functionFragment: "daoAddress",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "distribution",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "endTime", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ethdByTokens",
@@ -90,7 +121,11 @@ export interface VulcanInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getContributorNumber",
+    functionFragment: "getContributors",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getHistory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -98,11 +133,11 @@ export interface VulcanInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getInvestorAmount",
+    functionFragment: "getInvestAmount",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getInvestorNumber",
+    functionFragment: "getInvestors",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -110,6 +145,10 @@ export interface VulcanInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "hardcap", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "history",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "invest",
     values: [BigNumberish, AddressLike]
@@ -136,7 +175,9 @@ export interface VulcanInterface extends Interface {
     functionFragment: "projectURI",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "refund", values?: undefined): string;
   encodeFunctionData(functionFragment: "softcap", values?: undefined): string;
+  encodeFunctionData(functionFragment: "startTime", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(functionFragment: "tokenInfo", values?: undefined): string;
   encodeFunctionData(
@@ -151,6 +192,10 @@ export interface VulcanInterface extends Interface {
     functionFragment: "tokensByEth",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "tokensFullyCharged",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "totalCap", values?: undefined): string;
 
   decodeFunctionResult(
@@ -163,6 +208,10 @@ export interface VulcanInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "creator", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "daoAddress", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "distribution",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "endTime", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ethdByTokens",
@@ -178,19 +227,20 @@ export interface VulcanInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getContributorNumber",
+    functionFragment: "getContributors",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getHistory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getICOState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getInvestorAmount",
+    functionFragment: "getInvestAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getInvestorNumber",
+    functionFragment: "getInvestors",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -198,6 +248,7 @@ export interface VulcanInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "hardcap", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "history", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "investments",
@@ -215,7 +266,9 @@ export interface VulcanInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "projectURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "softcap", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenInfo", data: BytesLike): Result;
   decodeFunctionResult(
@@ -230,30 +283,40 @@ export interface VulcanInterface extends Interface {
     functionFragment: "tokensByEth",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokensFullyCharged",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "totalCap", data: BytesLike): Result;
 }
 
 export namespace FeeDistributedEvent {
   export type InputTuple = [
     ico_: AddressLike,
+    distributor_: AddressLike,
     fundsRaised_: BigNumberish,
     daoFee_: BigNumberish,
     listerFee_: BigNumberish,
-    creatorFee_: BigNumberish
+    creatorFee_: BigNumberish,
+    timestamp_: BigNumberish
   ];
   export type OutputTuple = [
     ico_: string,
+    distributor_: string,
     fundsRaised_: bigint,
     daoFee_: bigint,
     listerFee_: bigint,
-    creatorFee_: bigint
+    creatorFee_: bigint,
+    timestamp_: bigint
   ];
   export interface OutputObject {
     ico_: string;
+    distributor_: string;
     fundsRaised_: bigint;
     daoFee_: bigint;
     listerFee_: bigint;
     creatorFee_: bigint;
+    timestamp_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -262,11 +325,16 @@ export namespace FeeDistributedEvent {
 }
 
 export namespace FundsRefundedEvent {
-  export type InputTuple = [ico_: AddressLike, msg_: string];
-  export type OutputTuple = [ico_: string, msg_: string];
+  export type InputTuple = [
+    ico_: AddressLike,
+    caller_: AddressLike,
+    timestamp_: BigNumberish
+  ];
+  export type OutputTuple = [ico_: string, caller_: string, timestamp_: bigint];
   export interface OutputObject {
     ico_: string;
-    msg_: string;
+    caller_: string;
+    timestamp_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -279,19 +347,22 @@ export namespace InvestEvent {
     ico_: AddressLike,
     investor_: AddressLike,
     contributor_: AddressLike,
-    amount_: BigNumberish
+    amount_: BigNumberish,
+    timestamp_: BigNumberish
   ];
   export type OutputTuple = [
     ico_: string,
     investor_: string,
     contributor_: string,
-    amount_: bigint
+    amount_: bigint,
+    timestamp_: bigint
   ];
   export interface OutputObject {
     ico_: string;
     investor_: string;
     contributor_: string;
     amount_: bigint;
+    timestamp_: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -350,6 +421,18 @@ export interface Vulcan extends BaseContract {
 
   daoAddress: TypedContractMethod<[], [string], "view">;
 
+  distribution: TypedContractMethod<
+    [],
+    [
+      [boolean, string, bigint] & {
+        distributed: boolean;
+        distributor: string;
+        timestamp: bigint;
+      }
+    ],
+    "view"
+  >;
+
   endTime: TypedContractMethod<[], [bigint], "view">;
 
   ethdByTokens: TypedContractMethod<[amount_: BigNumberish], [bigint], "view">;
@@ -364,13 +447,15 @@ export interface Vulcan extends BaseContract {
     "view"
   >;
 
-  getContributorNumber: TypedContractMethod<[], [bigint], "view">;
+  getContributors: TypedContractMethod<[], [string[]], "view">;
+
+  getHistory: TypedContractMethod<[], [Vulcan.HISTORYStructOutput[]], "view">;
 
   getICOState: TypedContractMethod<[], [bigint], "view">;
 
-  getInvestorAmount: TypedContractMethod<[from: AddressLike], [bigint], "view">;
+  getInvestAmount: TypedContractMethod<[from: AddressLike], [bigint], "view">;
 
-  getInvestorNumber: TypedContractMethod<[], [bigint], "view">;
+  getInvestors: TypedContractMethod<[], [string[]], "view">;
 
   getTokenAmountForInvestor: TypedContractMethod<
     [from: AddressLike],
@@ -379,6 +464,19 @@ export interface Vulcan extends BaseContract {
   >;
 
   hardcap: TypedContractMethod<[], [bigint], "view">;
+
+  history: TypedContractMethod<
+    [arg0: BigNumberish],
+    [
+      [string, string, bigint, bigint] & {
+        investor: string;
+        contributor: string;
+        amount: bigint;
+        timestamp: bigint;
+      }
+    ],
+    "view"
+  >;
 
   invest: TypedContractMethod<
     [amount_: BigNumberish, contributor_: AddressLike],
@@ -400,7 +498,21 @@ export interface Vulcan extends BaseContract {
 
   projectURI: TypedContractMethod<[], [string], "view">;
 
+  refund: TypedContractMethod<
+    [],
+    [
+      [boolean, string, bigint] & {
+        refunded: boolean;
+        refunder: string;
+        timestamp: bigint;
+      }
+    ],
+    "view"
+  >;
+
   softcap: TypedContractMethod<[], [bigint], "view">;
+
+  startTime: TypedContractMethod<[], [bigint], "view">;
 
   token: TypedContractMethod<[], [string], "view">;
 
@@ -429,6 +541,8 @@ export interface Vulcan extends BaseContract {
 
   tokensByEth: TypedContractMethod<[amount_: BigNumberish], [bigint], "view">;
 
+  tokensFullyCharged: TypedContractMethod<[], [boolean], "view">;
+
   totalCap: TypedContractMethod<[], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -448,6 +562,19 @@ export interface Vulcan extends BaseContract {
     nameOrSignature: "daoAddress"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "distribution"
+  ): TypedContractMethod<
+    [],
+    [
+      [boolean, string, bigint] & {
+        distributed: boolean;
+        distributor: string;
+        timestamp: bigint;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "endTime"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -463,23 +590,40 @@ export interface Vulcan extends BaseContract {
     nameOrSignature: "getContributorAmount"
   ): TypedContractMethod<[from: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getContributorNumber"
-  ): TypedContractMethod<[], [bigint], "view">;
+    nameOrSignature: "getContributors"
+  ): TypedContractMethod<[], [string[]], "view">;
+  getFunction(
+    nameOrSignature: "getHistory"
+  ): TypedContractMethod<[], [Vulcan.HISTORYStructOutput[]], "view">;
   getFunction(
     nameOrSignature: "getICOState"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getInvestorAmount"
+    nameOrSignature: "getInvestAmount"
   ): TypedContractMethod<[from: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getInvestorNumber"
-  ): TypedContractMethod<[], [bigint], "view">;
+    nameOrSignature: "getInvestors"
+  ): TypedContractMethod<[], [string[]], "view">;
   getFunction(
     nameOrSignature: "getTokenAmountForInvestor"
   ): TypedContractMethod<[from: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "hardcap"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "history"
+  ): TypedContractMethod<
+    [arg0: BigNumberish],
+    [
+      [string, string, bigint, bigint] & {
+        investor: string;
+        contributor: string;
+        amount: bigint;
+        timestamp: bigint;
+      }
+    ],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "invest"
   ): TypedContractMethod<
@@ -509,7 +653,23 @@ export interface Vulcan extends BaseContract {
     nameOrSignature: "projectURI"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "refund"
+  ): TypedContractMethod<
+    [],
+    [
+      [boolean, string, bigint] & {
+        refunded: boolean;
+        refunder: string;
+        timestamp: bigint;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "softcap"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "startTime"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "token"
@@ -540,6 +700,9 @@ export interface Vulcan extends BaseContract {
     nameOrSignature: "tokensByEth"
   ): TypedContractMethod<[amount_: BigNumberish], [bigint], "view">;
   getFunction(
+    nameOrSignature: "tokensFullyCharged"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
     nameOrSignature: "totalCap"
   ): TypedContractMethod<[], [bigint], "view">;
 
@@ -566,7 +729,7 @@ export interface Vulcan extends BaseContract {
   >;
 
   filters: {
-    "FeeDistributed(address,uint256,uint256,uint256,uint256)": TypedContractEvent<
+    "FeeDistributed(address,address,uint256,uint256,uint256,uint256,uint256)": TypedContractEvent<
       FeeDistributedEvent.InputTuple,
       FeeDistributedEvent.OutputTuple,
       FeeDistributedEvent.OutputObject
@@ -577,7 +740,7 @@ export interface Vulcan extends BaseContract {
       FeeDistributedEvent.OutputObject
     >;
 
-    "FundsRefunded(address,string)": TypedContractEvent<
+    "FundsRefunded(address,address,uint256)": TypedContractEvent<
       FundsRefundedEvent.InputTuple,
       FundsRefundedEvent.OutputTuple,
       FundsRefundedEvent.OutputObject
@@ -588,7 +751,7 @@ export interface Vulcan extends BaseContract {
       FundsRefundedEvent.OutputObject
     >;
 
-    "Invest(address,address,address,uint256)": TypedContractEvent<
+    "Invest(address,address,address,uint256,uint256)": TypedContractEvent<
       InvestEvent.InputTuple,
       InvestEvent.OutputTuple,
       InvestEvent.OutputObject

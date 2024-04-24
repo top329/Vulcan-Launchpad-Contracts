@@ -68,13 +68,17 @@ contract VulcanPadFactory {
     /// @dev launched ICO
     mapping(address => bool) isVulcan;
 
-    /// @dev events
+    /// @dev event when user paid 100DAI spam filter fee
     event SpamFilterFeePaid(address user_, uint256 amount_);
+
+    /// @dev event when new ICO is created
     event ICOCreated(
-        address user,
+        address creator_,
+        address ico_,
         string projectURI,
         uint256 softcap,
         uint256 hardcap,
+        uint256 startTime,
         uint256 endTime,
         string name,
         string symbol,
@@ -167,7 +171,7 @@ contract VulcanPadFactory {
         owner = msg.sender;
     }
     /**
-     * @dev Pays non-refundable Spam filter fee 100DAI
+     * @dev Pay non-refundable spam filter fee of 100DAI
      */
     function paySpamFilterFee() external {
         uint256 _allowance = daiToken.allowance(msg.sender, address(this));
@@ -176,7 +180,7 @@ contract VulcanPadFactory {
         SafeERC20.safeTransferFrom(
             daiToken,
             msg.sender,
-            address(this),
+            daoAddress,
             feeAmount
         );
         feeContributions[msg.sender] += feeAmount;
@@ -240,11 +244,14 @@ contract VulcanPadFactory {
         address _vulcan = address(_newVulcan);
         vulcans.push(_vulcan);
         feeContributions[msg.sender] -= feeAmount;
+
         emit ICOCreated(
             msg.sender,
+            _vulcan,
             projectURI_,
             softcap_,
             hardcap_,
+            block.timestamp,
             endTime_,
             name_,
             symbol_,
@@ -266,7 +273,7 @@ contract VulcanPadFactory {
     }
 
     /**
-     * @dev test if user already paid spam filter fee as 100DAI
+     * @dev Test whether the user has already paid the spam filter fee of 100DAI
      */
     function paidSpamFilterFee(address user_) external view returns (bool) {
         bool _success = feeContributions[user_] >= feeAmount;
