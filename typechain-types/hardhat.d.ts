@@ -66,6 +66,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DEW__factory>;
     getContractFactory(
+      name: "Test_aluxion",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Test_aluxion__factory>;
+    getContractFactory(
       name: "Vulcan",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Vulcan__factory>;
@@ -140,6 +144,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DEW>;
     getContractAt(
+      name: "Test_aluxion",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Test_aluxion>;
+    getContractAt(
       name: "Vulcan",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -203,6 +212,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DEW>;
     deployContract(
+      name: "Test_aluxion",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Test_aluxion>;
+    deployContract(
       name: "Vulcan",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Vulcan>;
@@ -276,6 +289,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DEW>;
+    deployContract(
+      name: "Test_aluxion",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Test_aluxion>;
     deployContract(
       name: "Vulcan",
       args: any[],

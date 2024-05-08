@@ -19,7 +19,7 @@ describe("Factory Contract Test", function () {
     let contributor2:any ;
     const daoAddress:any = "0x5B98a0c38d3684644A9Ada0baaeAae452aE3267B";
 
-    const _endTime = Math.floor(new Date("2024-04-25").getTime() / 1000);
+    const _endTime = Math.floor(new Date("2024-04-30").getTime() / 1000);
 
 
     it("should deploy DAI contract", async function(){
@@ -66,14 +66,15 @@ describe("Factory Contract Test", function () {
         
         //ICO information for deployment...
         const _projectURI = "https://ipfs:werwqerwerqwer";
-        const _softcap = ethers.parseEther("1");
-        const _hardcap = ethers.parseEther("2");
+        const _softcap = ethers.parseEther("0.5");
+        const _hardcap = ethers.parseEther("1");
         const _symbol = "DEW";
         const _name = "Dreams Evolving Widely";
-        const _price = ethers.parseEther("0.0001");
+        const _price = ethers.parseEther("0.000000393218720152");
         const _decimals = 18;
-        const _totalSupply = "1000000000000000000000000000";
+        const _totalSupply = "10000000000000000000000000000000000";
         const _tokenAddress = await dew.getAddress();
+        const _fundsAddress = "0xC80e9598cC9B3474Ac55888b01521a1E206385da";
 
         await vulcanPadFactory.connect(user).launchNewICO(
             _projectURI,
@@ -86,6 +87,7 @@ describe("Factory Contract Test", function () {
             _decimals,
             _totalSupply,
             _tokenAddress,
+            _fundsAddress,
             lister.address
         );
         // console.log("user's fee: ", await vulcanPadFactory.feeContributions(await user.address))
@@ -136,9 +138,9 @@ describe("Factory Contract Test", function () {
 
     it("Try to invest", async function () {
 
-        await dew.connect(user).transfer(await ico.getAddress(), ethers.parseEther("10000"));
+        await dew.connect(user).transfer(await ico.getAddress(), ethers.parseUnits("1543114.817261654", 18));
         console.log("status -----------", await ico.tokensFullyCharged ());
-        await dew.connect(user).transfer(await ico.getAddress(), ethers.parseEther("10000"));
+        await dew.connect(user).transfer(await ico.getAddress(), ethers.parseUnits("1000000", 18));
         console.log("status -----------", await ico.tokensFullyCharged ());
         // await dew.connect(user).transfer(await ico.getAddress(), 200000*1e10);
 
@@ -148,10 +150,12 @@ describe("Factory Contract Test", function () {
         console.log("ICO state ", await ico.getICOState ());
         
         // invest 0.1 via contributor1
-        await ico.connect(user1).invest(ethers.parseEther("0.8"), contributor1, {value: ethers.parseEther("100")});
+        await ico.connect(user1).invest(ethers.parseEther("0.500000353643214943"), contributor1, {value: ethers.parseEther("1.000000353643214943")});
         _user1Balance = await dew.balanceOf(user1.address);
         let _history = await ico.getHistory ();
         console.log("history ------", _history);
+
+
         
         
         _user1Balance = await dew.balanceOf(user1.address);
@@ -160,9 +164,9 @@ describe("Factory Contract Test", function () {
         console.log("ICO state ", await ico.getICOState ());
         
         // invest 59.9 via contributor2
-        // await ico.connect(user1).invest(ethers.parseEther("1.2"), contributor2,  {value: ethers.parseEther("60")});
-        // _history = await ico.getHistory ();
-        // console.log("history ------", _history);
+        await ico.connect(user1).invest(ethers.parseEther("0.5"), contributor2,  {value: ethers.parseEther("60")});
+        _history = await ico.getHistory ();
+        console.log("history ------", _history);
         await time.increaseTo(_endTime) ;
         
         _user1Balance = await dew.balanceOf(user1.address);
@@ -171,19 +175,15 @@ describe("Factory Contract Test", function () {
         console.log("ICO state ", await ico.getICOState ());
     });
 
-   
+    // it("claim with creator when finish ICO", async function () {
+    //     console.log("ICO state ", await ico.getICOState ());
+    //     await ico.connect(user1).finish() ;
 
+    //     const distribution = await ico.distribution ();
+    //     const refund = await ico.refund ();
 
-
-    it("claim with creator when finish ICO", async function () {
-        console.log("ICO state ", await ico.getICOState ());
-        await ico.connect(user1).finish() ;
-
-        const distribution = await ico.distribution ();
-        const refund = await ico.refund ();
-
-        console.log({ distribution, refund });
-    });
+    //     console.log({ distribution, refund });
+    // });
 
     it("Check the balance of all addresses", async function(){
         const listerAmount = await ethers.provider.getBalance(lister.address) ;

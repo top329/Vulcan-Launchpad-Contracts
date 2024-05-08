@@ -6,3 +6,4 @@ export type { DAI } from "./DAI";
 export type { DEW } from "./DEW";
 export type { Vulcan } from "./Vulcan";
 export type { VulcanPadFactory } from "./VulcanPadFactory";
+export type { Test_aluxion } from "./Test_aluxion";

@@ -69,12 +69,12 @@ contract VulcanPadFactory {
     mapping(address => bool) isVulcan;
 
     /// @dev event when user paid 100DAI spam filter fee
-    event SpamFilterFeePaid(address user_, uint256 amount_);
+    event PaidSpamFilterFee(address user, uint256 amount);
 
     /// @dev event when new ICO is created
     event ICOCreated(
-        address creator_,
-        address ico_,
+        address creator,
+        address ico,
         string projectURI,
         uint256 softcap,
         uint256 hardcap,
@@ -86,12 +86,19 @@ contract VulcanPadFactory {
         uint256 decimal,
         uint256 totalSupply,
         address tokenAddress,
+        address fundsAddress,
         address lister
     );
 
     /// @dev validate if token address is non-zero
-    modifier notZeroAddress(address token_) {
-        require(token_ != address(0), "Invalid TOKEN address");
+    modifier notZeroTokenAddress(address address_) {
+        require(address_ != address(0), "Invalid TOKEN address");
+        _;
+    }
+
+    /// @dev validate if token address is non-zero
+    modifier notZeroFundsAddress(address address_) {
+        require(address_ != address(0), "Invalid address that funds go to");
         _;
     }
 
@@ -102,7 +109,7 @@ contract VulcanPadFactory {
     }
 
     /// @dev validate if paid 100DAI spam filter fee
-    modifier PaidSpamFilterFee(address user_) {
+    modifier spamFilterFeePaid(address user_) {
         require(
             feeContributions[user_] >= feeAmount,
             "Not paid spam filter fee"
@@ -185,7 +192,7 @@ contract VulcanPadFactory {
         );
         feeContributions[msg.sender] += feeAmount;
 
-        emit SpamFilterFeePaid(msg.sender, feeAmount);
+        emit PaidSpamFilterFee(msg.sender, feeAmount);
     }
     /**
      * @dev launch new ICO
@@ -198,8 +205,9 @@ contract VulcanPadFactory {
      * @param price_ token price for ICO 0.01 * 10**18
      * @param decimal_ token decimal 18
      * @param totalSupply_ token totalSupply 1000000000 * 10**18
-     * @param tokenAddress_ token address 0x810fa...
-     * @param lister_ listing partner's address 0x810fa...
+     * @param tokenAddress_ token address
+     * @param fundsAddress_ account address that funds will go to
+     * @param lister_ listing partner's address
      */
     function launchNewICO(
         string memory projectURI_,
@@ -212,13 +220,15 @@ contract VulcanPadFactory {
         uint256 decimal_,
         uint256 totalSupply_,
         address tokenAddress_,
+        address fundsAddress_,
         address lister_
     )
         public
-        PaidSpamFilterFee(msg.sender)
+        spamFilterFeePaid(msg.sender)
         capSettingValid(softcap_, hardcap_)
         isFuture(endTime_)
-        notZeroAddress(tokenAddress_)
+        notZeroTokenAddress(tokenAddress_)
+        notZeroFundsAddress(fundsAddress_)
         notZeroPrice(price_)
         totalSupplyAbleToReachHardcap(price_, totalSupply_, decimal_, hardcap_)
         notZeroDecimal(decimal_)
@@ -238,6 +248,7 @@ contract VulcanPadFactory {
             totalSupply_,
             tokenAddress_,
             daoAddress,
+            fundsAddress_,
             lister_
         );
 
@@ -259,6 +270,7 @@ contract VulcanPadFactory {
             decimal_,
             totalSupply_,
             tokenAddress_,
+            fundsAddress_,
             lister_
         );
         return _vulcan;

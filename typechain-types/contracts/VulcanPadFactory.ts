@@ -41,7 +41,7 @@ export interface VulcanPadFactoryInterface extends Interface {
   ): FunctionFragment;
 
   getEvent(
-    nameOrSignatureOrTopic: "ICOCreated" | "SpamFilterFeePaid"
+    nameOrSignatureOrTopic: "ICOCreated" | "PaidSpamFilterFee"
   ): EventFragment;
 
   encodeFunctionData(functionFragment: "daiToken", values?: undefined): string;
@@ -70,6 +70,7 @@ export interface VulcanPadFactoryInterface extends Interface {
       BigNumberish,
       BigNumberish,
       BigNumberish,
+      AddressLike,
       AddressLike,
       AddressLike
     ]
@@ -127,8 +128,8 @@ export interface VulcanPadFactoryInterface extends Interface {
 
 export namespace ICOCreatedEvent {
   export type InputTuple = [
-    creator_: AddressLike,
-    ico_: AddressLike,
+    creator: AddressLike,
+    ico: AddressLike,
     projectURI: string,
     softcap: BigNumberish,
     hardcap: BigNumberish,
@@ -140,11 +141,12 @@ export namespace ICOCreatedEvent {
     decimal: BigNumberish,
     totalSupply: BigNumberish,
     tokenAddress: AddressLike,
+    fundsAddress: AddressLike,
     lister: AddressLike
   ];
   export type OutputTuple = [
-    creator_: string,
-    ico_: string,
+    creator: string,
+    ico: string,
     projectURI: string,
     softcap: bigint,
     hardcap: bigint,
@@ -156,11 +158,12 @@ export namespace ICOCreatedEvent {
     decimal: bigint,
     totalSupply: bigint,
     tokenAddress: string,
+    fundsAddress: string,
     lister: string
   ];
   export interface OutputObject {
-    creator_: string;
-    ico_: string;
+    creator: string;
+    ico: string;
     projectURI: string;
     softcap: bigint;
     hardcap: bigint;
@@ -172,6 +175,7 @@ export namespace ICOCreatedEvent {
     decimal: bigint;
     totalSupply: bigint;
     tokenAddress: string;
+    fundsAddress: string;
     lister: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -180,12 +184,12 @@ export namespace ICOCreatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace SpamFilterFeePaidEvent {
-  export type InputTuple = [user_: AddressLike, amount_: BigNumberish];
-  export type OutputTuple = [user_: string, amount_: bigint];
+export namespace PaidSpamFilterFeeEvent {
+  export type InputTuple = [user: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [user: string, amount: bigint];
   export interface OutputObject {
-    user_: string;
-    amount_: bigint;
+    user: string;
+    amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -258,6 +262,7 @@ export interface VulcanPadFactory extends BaseContract {
       decimal_: BigNumberish,
       totalSupply_: BigNumberish,
       tokenAddress_: AddressLike,
+      fundsAddress_: AddressLike,
       lister_: AddressLike
     ],
     [string],
@@ -317,6 +322,7 @@ export interface VulcanPadFactory extends BaseContract {
       decimal_: BigNumberish,
       totalSupply_: BigNumberish,
       tokenAddress_: AddressLike,
+      fundsAddress_: AddressLike,
       lister_: AddressLike
     ],
     [string],
@@ -349,15 +355,15 @@ export interface VulcanPadFactory extends BaseContract {
     ICOCreatedEvent.OutputObject
   >;
   getEvent(
-    key: "SpamFilterFeePaid"
+    key: "PaidSpamFilterFee"
   ): TypedContractEvent<
-    SpamFilterFeePaidEvent.InputTuple,
-    SpamFilterFeePaidEvent.OutputTuple,
-    SpamFilterFeePaidEvent.OutputObject
+    PaidSpamFilterFeeEvent.InputTuple,
+    PaidSpamFilterFeeEvent.OutputTuple,
+    PaidSpamFilterFeeEvent.OutputObject
   >;
 
   filters: {
-    "ICOCreated(address,address,string,uint256,uint256,uint256,uint256,string,string,uint256,uint256,uint256,address,address)": TypedContractEvent<
+    "ICOCreated(address,address,string,uint256,uint256,uint256,uint256,string,string,uint256,uint256,uint256,address,address,address)": TypedContractEvent<
       ICOCreatedEvent.InputTuple,
       ICOCreatedEvent.OutputTuple,
       ICOCreatedEvent.OutputObject
@@ -368,15 +374,15 @@ export interface VulcanPadFactory extends BaseContract {
       ICOCreatedEvent.OutputObject
     >;
 
-    "SpamFilterFeePaid(address,uint256)": TypedContractEvent<
-      SpamFilterFeePaidEvent.InputTuple,
-      SpamFilterFeePaidEvent.OutputTuple,
-      SpamFilterFeePaidEvent.OutputObject
+    "PaidSpamFilterFee(address,uint256)": TypedContractEvent<
+      PaidSpamFilterFeeEvent.InputTuple,
+      PaidSpamFilterFeeEvent.OutputTuple,
+      PaidSpamFilterFeeEvent.OutputObject
     >;
-    SpamFilterFeePaid: TypedContractEvent<
-      SpamFilterFeePaidEvent.InputTuple,
-      SpamFilterFeePaidEvent.OutputTuple,
-      SpamFilterFeePaidEvent.OutputObject
+    PaidSpamFilterFee: TypedContractEvent<
+      PaidSpamFilterFeeEvent.InputTuple,
+      PaidSpamFilterFeeEvent.OutputTuple,
+      PaidSpamFilterFeeEvent.OutputObject
     >;
   };
 }

@@ -55,6 +55,7 @@ export interface VulcanInterface extends Interface {
       | "endTime"
       | "ethdByTokens"
       | "finish"
+      | "fundsAddress"
       | "fundsRaised"
       | "getContributorAmount"
       | "getContributors"
@@ -112,6 +113,10 @@ export interface VulcanInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "finish", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "fundsAddress",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "fundsRaised",
     values?: undefined
@@ -219,6 +224,10 @@ export interface VulcanInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "finish", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "fundsAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "fundsRaised",
     data: BytesLike
   ): Result;
@@ -292,31 +301,31 @@ export interface VulcanInterface extends Interface {
 
 export namespace FeeDistributedEvent {
   export type InputTuple = [
-    ico_: AddressLike,
-    distributor_: AddressLike,
-    fundsRaised_: BigNumberish,
-    daoFee_: BigNumberish,
-    listerFee_: BigNumberish,
-    creatorFee_: BigNumberish,
-    timestamp_: BigNumberish
+    ico: AddressLike,
+    distributor: AddressLike,
+    fundsRaised: BigNumberish,
+    daoFee: BigNumberish,
+    listerFee: BigNumberish,
+    creatorFee: BigNumberish,
+    timestamp: BigNumberish
   ];
   export type OutputTuple = [
-    ico_: string,
-    distributor_: string,
-    fundsRaised_: bigint,
-    daoFee_: bigint,
-    listerFee_: bigint,
-    creatorFee_: bigint,
-    timestamp_: bigint
+    ico: string,
+    distributor: string,
+    fundsRaised: bigint,
+    daoFee: bigint,
+    listerFee: bigint,
+    creatorFee: bigint,
+    timestamp: bigint
   ];
   export interface OutputObject {
-    ico_: string;
-    distributor_: string;
-    fundsRaised_: bigint;
-    daoFee_: bigint;
-    listerFee_: bigint;
-    creatorFee_: bigint;
-    timestamp_: bigint;
+    ico: string;
+    distributor: string;
+    fundsRaised: bigint;
+    daoFee: bigint;
+    listerFee: bigint;
+    creatorFee: bigint;
+    timestamp: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -326,15 +335,15 @@ export namespace FeeDistributedEvent {
 
 export namespace FundsRefundedEvent {
   export type InputTuple = [
-    ico_: AddressLike,
-    caller_: AddressLike,
-    timestamp_: BigNumberish
+    ico: AddressLike,
+    caller: AddressLike,
+    timestamp: BigNumberish
   ];
-  export type OutputTuple = [ico_: string, caller_: string, timestamp_: bigint];
+  export type OutputTuple = [ico: string, caller: string, timestamp: bigint];
   export interface OutputObject {
-    ico_: string;
-    caller_: string;
-    timestamp_: bigint;
+    ico: string;
+    caller: string;
+    timestamp: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -344,25 +353,25 @@ export namespace FundsRefundedEvent {
 
 export namespace InvestEvent {
   export type InputTuple = [
-    ico_: AddressLike,
-    investor_: AddressLike,
-    contributor_: AddressLike,
-    amount_: BigNumberish,
-    timestamp_: BigNumberish
+    ico: AddressLike,
+    investor: AddressLike,
+    contributor: AddressLike,
+    amount: BigNumberish,
+    timestamp: BigNumberish
   ];
   export type OutputTuple = [
-    ico_: string,
-    investor_: string,
-    contributor_: string,
-    amount_: bigint,
-    timestamp_: bigint
+    ico: string,
+    investor: string,
+    contributor: string,
+    amount: bigint,
+    timestamp: bigint
   ];
   export interface OutputObject {
-    ico_: string;
-    investor_: string;
-    contributor_: string;
-    amount_: bigint;
-    timestamp_: bigint;
+    ico: string;
+    investor: string;
+    contributor: string;
+    amount: bigint;
+    timestamp: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -437,7 +446,9 @@ export interface Vulcan extends BaseContract {
 
   ethdByTokens: TypedContractMethod<[amount_: BigNumberish], [bigint], "view">;
 
-  finish: TypedContractMethod<[], [void], "nonpayable">;
+  finish: TypedContractMethod<[], [void], "payable">;
+
+  fundsAddress: TypedContractMethod<[], [string], "view">;
 
   fundsRaised: TypedContractMethod<[], [bigint], "view">;
 
@@ -582,7 +593,10 @@ export interface Vulcan extends BaseContract {
   ): TypedContractMethod<[amount_: BigNumberish], [bigint], "view">;
   getFunction(
     nameOrSignature: "finish"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "fundsAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "fundsRaised"
   ): TypedContractMethod<[], [bigint], "view">;

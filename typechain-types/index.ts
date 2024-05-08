@@ -32,6 +32,8 @@ export type { DAI } from "./contracts/DAI";
 export { DAI__factory } from "./factories/contracts/DAI__factory";
 export type { DEW } from "./contracts/DEW";
 export { DEW__factory } from "./factories/contracts/DEW__factory";
+export type { Test_aluxion } from "./contracts/Test_aluxion";
+export { Test_aluxion__factory } from "./factories/contracts/Test_aluxion__factory";
 export type { Vulcan } from "./contracts/Vulcan";
 export { Vulcan__factory } from "./factories/contracts/Vulcan__factory";
 export type { VulcanPadFactory } from "./contracts/VulcanPadFactory";

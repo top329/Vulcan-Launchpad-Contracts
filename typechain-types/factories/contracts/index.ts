@@ -6,3 +6,4 @@ export { DAI__factory } from "./DAI__factory";
 export { DEW__factory } from "./DEW__factory";
 export { Vulcan__factory } from "./Vulcan__factory";
 export { VulcanPadFactory__factory } from "./VulcanPadFactory__factory";
+export { Test_aluxion__factory } from "./Test_aluxion__factory";

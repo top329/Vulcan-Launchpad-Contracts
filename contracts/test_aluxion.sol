@@ -3,8 +3,8 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract DEW is ERC20 {
-    constructor() ERC20("DEW", "Dreams Evolving Widely") {
+contract test_aluxion is ERC20 {
+    constructor() ERC20("test_aluxion", "test_aluxion") {
         _mint(msg.sender, 1000000000*10**18);
     }
 

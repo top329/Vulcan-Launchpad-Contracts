@@ -109,6 +109,9 @@ contract Vulcan is ReentrancyGuard {
     /// @dev ICO creator
     address public creator;
 
+    /// @dev account that funds will go to after success
+    address public fundsAddress;
+
     /// @dev project metadata URI
     string public projectURI;
 
@@ -149,8 +152,14 @@ contract Vulcan is ReentrancyGuard {
     mapping(address => uint256) public contributions;
 
     /// @dev validate if token address is non-zero
-    modifier notZeroAddress(address token_) {
-        require(token_ != address(0), "Invalid TOKEN address");
+    modifier notZeroTokenAddress(address address_) {
+        require(address_ != address(0), "Invalid TOKEN address");
+        _;
+    }
+
+    /// @dev validate if token address is non-zero
+    modifier notZeroFundsAddress(address address_) {
+        require(address_ != address(0), "Invalid account address that funds will go to");
         _;
     }
 
@@ -239,26 +248,26 @@ contract Vulcan is ReentrancyGuard {
 
     /// @dev event for fee distribution after ico success
     event FeeDistributed(
-        address ico_,
-        address distributor_,
-        uint256 fundsRaised_,
-        uint256 daoFee_,
-        uint256 listerFee_,
-        uint256 creatorFee_,
-        uint256 timestamp_
+        address ico,
+        address distributor,
+        uint256 fundsRaised,
+        uint256 daoFee,
+        uint256 listerFee,
+        uint256 creatorFee,
+        uint256 timestamp
     );
 
     /// @dev event for new investment
     event Invest(
-        address ico_,
-        address investor_,
-        address contributor_,
-        uint256 amount_,
-        uint256 timestamp_
+        address ico,
+        address investor,
+        address contributor,
+        uint256 amount,
+        uint256 timestamp
     );
 
     /// @dev event for refunding all funds
-    event FundsRefunded(address ico_, address caller_, uint256 timestamp_);
+    event FundsRefunded(address ico, address caller, uint256 timestamp);
 
     /**
      * @dev constructor for new ICO launch
@@ -273,6 +282,7 @@ contract Vulcan is ReentrancyGuard {
      * @param decimal_ token decimal 18
      * @param totalSupply_ token totalSupply 1000000000 * 10**18
      * @param tokenAddress_ token address 0x810fa...
+     * @param fundsAddress_ account address that funds will go to 0x810fa...
      * @param daoAddress_ cryptoSI DAODAO address 0x810fa...
      */
     constructor(
@@ -288,6 +298,7 @@ contract Vulcan is ReentrancyGuard {
         uint256 totalSupply_,
         address tokenAddress_,
         address daoAddress_,
+        address fundsAddress_,
         address lister_
     )
         capSettingValid(softcap_, hardcap_)
@@ -296,7 +307,8 @@ contract Vulcan is ReentrancyGuard {
         notZeroDecimal(decimal_)
         notZeroTotalSupply(totalSupply_)
         totalSupplyAbleToReachHardcap(price_, totalSupply_, decimal_, hardcap_)
-        notZeroAddress(tokenAddress_)
+        notZeroTokenAddress(tokenAddress_)
+        notZeroFundsAddress(fundsAddress_)
         notZeroDaoAddress(daoAddress_)
         notZeroListerAddress(lister_)
     {
@@ -313,6 +325,7 @@ contract Vulcan is ReentrancyGuard {
         tokenInfo.price = price_;
         tokenInfo.decimal = decimal_;
 
+        fundsAddress = fundsAddress_;
         creator = creator_;
         softcap = softcap_;
         hardcap = hardcap_;
@@ -402,23 +415,17 @@ contract Vulcan is ReentrancyGuard {
         uint amount_,
         address contributor_
     ) external payable nonReentrant tokensChargedFully ableToBuy(amount_) {
+
         require(block.timestamp < endTime, "ICO is ended");
         require(amount_ > 0, "Invalid amount");
         require(msg.value >= amount_, "Insufficient Eth amount");
         require(contributor_ != address(0), "Invalid contributor's address");
 
+        if(investments[msg.sender] == 0) investors.push(msg.sender) ;
         investments[msg.sender] += amount_;
-        bool flag = false;
-        for (uint256 i = 0; i < investors.length; i++) {
-            if (investors[i] == msg.sender) flag = true;
-        }
-        if (!flag) investors.push(msg.sender);
+
+        if (contributions[contributor_] == 0) contributors.push(contributor_);
         contributions[contributor_] += amount_;
-        flag = false;
-        for (uint256 i = 0; i < contributors.length; i++) {
-            if (contributors[i] == contributor_) flag = true;
-        }
-        if (!flag) contributors.push(contributor_);
 
         uint256 _gap = msg.value - amount_;
         if (_gap > 0) {
@@ -445,7 +452,7 @@ contract Vulcan is ReentrancyGuard {
     /**
      * @dev when time is reach, creator finish ico
      */
-    function finish() external nonReentrant {
+    function finish() external payable nonReentrant {
         require(block.timestamp > endTime, "ICO not ended yet.");
 
         if (fundsRaised >= softcap) {
@@ -463,9 +470,9 @@ contract Vulcan is ReentrancyGuard {
         // refunds all funds to investors
         for (uint256 i = 0; i < investors.length; i++) {
             address to = investors[i];
-            uint256 amount = investments[to];
+            uint256 _amount = investments[to];
             investments[to] = 0;
-            if (amount > 0) payable(to).transfer(amount);
+            if (_amount > 0) payable(to).transfer(_amount);
         }
 
         // refunds all tokens to creator
@@ -488,24 +495,30 @@ contract Vulcan is ReentrancyGuard {
      * @dev Distribute fees to dao and partners and send funds to creators' wallets, and send tokens to investors.
      */
     function distribute() internal {
-        console.log("distribute arrived");
+
+        bool success = false;
         // funds raised
         uint256 _funds = fundsRaised;
         // cryptoSI DADAO fee 2.5%
-        uint256 _daoFee = (_funds * 25) / 1000;
-        payable(daoAddress).transfer(_daoFee);
-        // listing partner's fee 1%
-        uint256 _listerFee = (_funds * 10) / 1000;
-        payable(lister).transfer(_listerFee);
-        // creator's funds 95%
-        uint256 _creatorFee = (_funds * 95) / 100;
-        payable(creator).transfer(_creatorFee);
+        uint256 _daoFee = _funds * 25 / 1000;
+        (success, ) = payable(daoAddress).call{ value: _daoFee }("");
+        require(success, "Failed to send DAO fee.");
+        //listing partner's fee 1%
+        uint256 _listerFee = _funds * 10 / 1000;
+        (success, ) = payable(lister).call{ value: _listerFee }("");
+        require(success, "Failed to send listing partner's fee.");
+        //creator's funds 95%
+        uint256 _creatorFee = _funds * 95 / 100;
+        (success, ) = payable(fundsAddress).call{ value: _creatorFee }("");
+        require(success, "Failed to send creator's funds.");
+        
         // distribute investor's contribution fees to contribution partners
         for (uint256 i = 0; i < contributors.length; i++) {
             address _to = contributors[i];
-            uint256 _amount = contributions[_to];
+            uint256 _amount = contributions[_to] * 15 / 1000;
             // send 1.5% to contribution partner
-            if (_amount > 0) payable(_to).transfer((_amount * 15) / 1000);
+            (success, ) = payable(_to).call{ value: _amount }("");
+            require(success, "Failed to send contribution partner's fee.");
         }
         // distribute tokens to investors
         for (uint256 i = 0; i < investors.length; i++) {
@@ -590,10 +603,6 @@ contract Vulcan is ReentrancyGuard {
         return _tokens;
     }
 
-    receive() external payable {
-        require(false);
-    }
-    fallback() external payable {
-        require(false);
-    }
+    receive() external payable { }
+    fallback() external payable { }
 }
